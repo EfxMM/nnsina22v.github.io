@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="tr" class="no-screenshot">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="İşletmelerde Beceri Eğitimi Dersi Çalışma Soruları">
+    <title>İŞLETMELERDE BECERİ EĞİTİMİ DERSİ ÇALIŞMA SORULARI</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Ekran görüntüsü engelleme CSS */
+        .no-screenshot {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        .no-screenshot body {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        /* Blocked message styles */
+        #blocked-message {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(220, 53, 69, 0.95);
+            z-index: 9999;
+            color: white;
+            text-align: center;
+            padding-top: 15%;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        #blocked-message h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        #blocked-message p {
+            font-size: 1.5rem;
+            max-width: 80%;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        #blocked-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+        
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        /* Ekran görüntüsü alındığında gösterilecek uyarı */
+        #screenshot-alert {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            color: white;
+            text-align: center;
+            z-index: 10000;
+            padding-top: 20%;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body oncontextmenu="return false" onselectstart="return false">
+    <div class="container">
+        <h1>İŞLETMELERDE BECERİ EĞİTİMİ DERSİ ÇALIŞMA SORULARI</h1>
+        
+        <div class="pagination-container">
+            <button id="prev-page" class="pagination-button">Önceki Sayfa</button>
+            <span id="page-info">Sayfa 1 / 7</span>
+            <button id="next-page" class="pagination-button">Sonraki Sayfa</button>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- Questions will be loaded here -->
+        </div>
+        
+        <div class="pagination-container">
+            <button id="prev-page-bottom" class="pagination-button">Önceki Sayfa</button>
+            <span id="page-info-bottom">Sayfa 1 / 7</span>
+            <button id="next-page-bottom" class="pagination-button">Sonraki Sayfa</button>
+        </div>
+        
+        <div class="results">
+            <button id="check-results">Sonuçları Kontrol Et</button>
+            <div id="result-summary" class="hidden">
+                <h2>Sonuç</h2>
+                <p>Doğru sayısı: <span id="correct-count">0</span></p>
+                <p>Yanlış sayısı: <span id="wrong-count">0</span></p>
+                <p>Boş sayısı: <span id="empty-count">0</span></p>
+                <p>Toplam soru sayısı: <span id="total-count">0</span></p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p><small>© 2025 İşletmelerde Beceri Eğitimi</small></p>
+            <p><a href="admin.html" style="color: #666; text-decoration: none; font-size: 12px;">Admin</a></p>
+        </div>
+    </div>
+    
+    <div id="blocked-message">
+        <div id="blocked-icon">🚫</div>
+        <h1>Erişiminiz Engellendi</h1>
+        <p>Bu siteye erişiminiz yönetici tarafından engellenmiştir.</p>
+        <p style="margin-top: 20px; font-size: 1rem;">IP adresiniz: <span id="blocked-ip">Yükleniyor...</span></p>
+    </div>
+    
+    <div id="screenshot-alert">
+        <p>Ekran görüntüsü alınma engellendi!</p>
+    </div>
+    
+    <script src="script.js"></script>
+    <script>
+        // Disable right click
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        
+        // Disable F12 key
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123) {
+                return false;
+            }
+            // Disable Ctrl+Shift+I
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) {
+                return false;
+            }
+            // Disable Ctrl+Shift+J
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) {
+                return false;
+            }
+            // Disable Ctrl+Shift+C
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) {
+                return false;
+            }
+            // Disable Ctrl+U
+            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) {
+                return false;
+            }
+            // Disable Print Screen
+            if(e.keyCode == 44) {
+                showScreenshotAlert();
+                return false;
+            }
+            // Disable Alt+PrtScn
+            if(e.altKey && e.keyCode == 44) {
+                showScreenshotAlert();
+                return false;
+            }
+            // Disable Windows+Shift+S (Windows 10 snipping tool)
+            if(e.shiftKey && e.keyCode == 83 && (navigator.platform.match("Win") ? e.metaKey : e.ctrlKey)) {
+                showScreenshotAlert();
+                return false;
+            }
+        }
+        
+        // Detect screenshot attempt (iOS and Android)
+        let hidden, visibilityChange;
+        if (typeof document.hidden !== "undefined") {
+            hidden = "hidden";
+            visibilityChange = "visibilitychange";
+        } else if (typeof document.msHidden !== "undefined") {
+            hidden = "msHidden";
+            visibilityChange = "msvisibilitychange";
+        } else if (typeof document.webkitHidden !== "undefined") {
+            hidden = "webkitHidden";
+            visibilityChange = "webkitvisibilitychange";
+        }
+        
+        // Listen for visibility changes (potential screenshot on mobile)
+        document.addEventListener(visibilityChange, function() {
+            if (document[hidden]) {
+                // Page became hidden - possible screenshot attempt on mobile
+                setTimeout(() => {
+                    if (!document[hidden]) {
+                        // If page becomes visible again quickly, it might be a screenshot
+                        showScreenshotAlert();
+                    }
+                }, 300);
+            }
+        }, false);
+        
+        // Show screenshot alert
+        function showScreenshotAlert() {
+            const alert = document.getElementById('screenshot-alert');
+            alert.style.display = 'block';
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 3000);
+            
+            // Log screenshot attempt
+            logScreenshotAttempt();
+        }
+        
+        // Log screenshot attempt
+        function logScreenshotAttempt() {
+            try {
+                const visitors = JSON.parse(localStorage.getItem('visitors') || '[]');
+                // Find current user's IP
+                let currentIP = 'unknown';
+                
+                for (const visitor of visitors) {
+                    if (visitor.ip && visitor.ip !== 'unknown') {
+                        currentIP = visitor.ip;
+                        break;
+                    }
+                }
+                
+                // Store screenshot attempt
+                const screenshotAttempts = JSON.parse(localStorage.getItem('screenshotAttempts') || '[]');
+                screenshotAttempts.push({
+                    ip: currentIP,
+                    timestamp: new Date().toISOString(),
+                    userAgent: navigator.userAgent
+                });
+                
+                localStorage.setItem('screenshotAttempts', JSON.stringify(screenshotAttempts));
+            } catch (error) {
+                console.error('Error logging screenshot attempt:', error);
+            }
+        }
+        
+        // Track visitor
+        async function trackVisitor() {
+            try {
+                // Get IP address using a public IP API (try multiple services)
+                let ip = 'unknown';
+                
+                try {
+                    // First attempt with ipify
+                    const response = await fetch('https://api.ipify.org?format=json');
+                    const data = await response.json();
+                    ip = data.ip;
+                } catch (e) {
+                    console.log('First IP API failed, trying alternative');
+                    try {
+                        // Second attempt with another service
+                        const response = await fetch('https://api.ipgeolocation.io/getip');
+                        const data = await response.json();
+                        ip = data.ip;
+                    } catch (e2) {
+                        console.log('Second IP API failed, trying last alternative');
+                        try {
+                            // Third attempt with another service
+                            const response = await fetch('https://api64.ipify.org?format=json');
+                            const data = await response.json();
+                            ip = data.ip;
+                        } catch (e3) {
+                            console.error('All IP APIs failed');
+                        }
+                    }
+                }
+                
+                // Set IP in blocked message
+                document.getElementById('blocked-ip').textContent = ip;
+                
+                // Check if this IP is blocked
+                const blockedIPs = JSON.parse(localStorage.getItem('blockedIPs') || '[]');
+                if (blockedIPs.includes(ip)) {
+                    showBlockedMessage();
+                    return;
+                }
+                
+                // Check for VPN or proxy
+                checkForVPN(ip);
+                
+                // Store visitor info
+                const visitorInfo = {
+                    ip: ip,
+                    userAgent: navigator.userAgent,
+                    timestamp: new Date().toISOString()
+                };
+                
+                // Get existing visitors
+                const visitors = JSON.parse(localStorage.getItem('visitors') || '[]');
+                
+                // Check if this IP already visited today
+                const today = new Date().toDateString();
+                const alreadyVisitedToday = visitors.some(visitor => 
+                    visitor.ip === ip && new Date(visitor.timestamp).toDateString() === today
+                );
+                
+                // Only add if not already visited today
+                if (!alreadyVisitedToday) {
+                    visitors.push(visitorInfo);
+                    // Save to localStorage
+                    localStorage.setItem('visitors', JSON.stringify(visitors));
+                }
+                
+            } catch (error) {
+                console.error('Error tracking visitor:', error);
+                
+                // Fallback if IP API fails
+                const visitorInfo = {
+                    ip: 'unknown',
+                    userAgent: navigator.userAgent,
+                    timestamp: new Date().toISOString()
+                };
+                
+                const visitors = JSON.parse(localStorage.getItem('visitors') || '[]');
+                visitors.push(visitorInfo);
+                localStorage.setItem('visitors', JSON.stringify(visitors));
+            }
+        }
+        
+        // Check for VPN or proxy
+        async function checkForVPN(ip) {
+            try {
+                // List of common VPN/proxy detection APIs
+                // Note: Most of these require API keys for production use
+                // For demo purposes, we'll use a simplified check
+                
+                // Check for common VPN/proxy indicators in user agent
+                const userAgent = navigator.userAgent.toLowerCase();
+                const vpnKeywords = ['vpn', 'proxy', 'tor', 'tunnel', 'anonymous'];
+                
+                const isLikelyVPN = vpnKeywords.some(keyword => userAgent.includes(keyword));
+                
+                // Check for timezone inconsistency (potential VPN indicator)
+                const browserTime = new Date();
+                const timezone = browserTime.getTimezoneOffset();
+                
+                // Get language and check if it matches expected timezone region
+                // This is a simplified check - not 100% reliable
+                const language = navigator.language || navigator.userLanguage;
+                const languageRegion = language.split('-')[1]?.toLowerCase();
+                
+                // Common Turkish timezones have -180 offset (UTC+3)
+                const isTurkishTimezone = timezone === -180;
+                const isTurkishLanguage = language.startsWith('tr') || languageRegion === 'tr';
+                
+                const timezoneInconsistency = isTurkishLanguage && !isTurkishTimezone;
+                
+                // If likely VPN detected, add to blocked IPs
+                if (isLikelyVPN || timezoneInconsistency) {
+                    console.log('Potential VPN detected');
+                    const blockedIPs = JSON.parse(localStorage.getItem('blockedIPs') || '[]');
+                    
+                    if (!blockedIPs.includes(ip)) {
+                        blockedIPs.push(ip);
+                        localStorage.setItem('blockedIPs', JSON.stringify(blockedIPs));
+                        
+                        // Show blocked message
+                        showBlockedMessage();
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking for VPN:', error);
+            }
+        }
+        
+        // Show blocked message with animation
+        function showBlockedMessage() {
+            const blockedMessage = document.getElementById('blocked-message');
+            blockedMessage.style.display = 'block';
+            document.querySelector('.container').style.display = 'none';
+            
+            // Add shake animation after a delay
+            setTimeout(() => {
+                blockedMessage.classList.add('shake');
+            }, 1000);
+        }
+        
+        // Listen for changes to localStorage
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'blockedIPs' || e.key === '_tempBlockUpdate') {
+                // When blockedIPs changes, check if current user is blocked
+                trackVisitor();
+            }
+        });
+        
+        // Track visitor when page loads
+        window.addEventListener('DOMContentLoaded', trackVisitor);
+    </script>
+</body>
+</html> 

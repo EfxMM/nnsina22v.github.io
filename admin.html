@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="tr" class="no-screenshot">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Giriş</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* Ekran görüntüsü engelleme CSS */
+        .no-screenshot {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        .no-screenshot body {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .login-header {
+            margin-bottom: 30px;
+        }
+        
+        .login-header h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .login-header p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #555;
+            font-weight: 600;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: #764ba2;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
+        }
+        
+        .btn {
+            width: 100%;
+            background-color: #764ba2;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #5f3d82;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            margin-top: 15px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .back-link {
+            margin-top: 20px;
+            display: block;
+            color: #666;
+            font-size: 14px;
+            text-decoration: none;
+        }
+        
+        .back-link:hover {
+            color: #764ba2;
+        }
+        
+        /* Ekran görüntüsü alındığında gösterilecek uyarı */
+        #screenshot-alert {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            color: white;
+            text-align: center;
+            z-index: 10000;
+            padding-top: 20%;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body oncontextmenu="return false" onselectstart="return false">
+    <div class="login-container">
+        <div class="login-header">
+            <h1>Admin Giriş</h1>
+            <p>İşletmelerde Beceri Eğitimi Dersi Admin Paneli</p>
+        </div>
+        
+        <form id="login-form">
+            <div class="form-group">
+                <label for="username">Kullanıcı Adı</label>
+                <input type="text" id="username" class="form-control" placeholder="Kullanıcı adınızı girin" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Şifre</label>
+                <input type="password" id="password" class="form-control" placeholder="Şifrenizi girin" required>
+            </div>
+            
+            <button type="submit" class="btn">Giriş Yap</button>
+            
+            <div id="error-message" class="error-message">
+                Kullanıcı adı veya şifre hatalı!
+            </div>
+        </form>
+        
+        <a href="index.html" class="back-link">Ana Sayfaya Dön</a>
+    </div>
+    
+    <div id="screenshot-alert">
+        <p>Ekran görüntüsü alınma engellendi!</p>
+    </div>
+    
+    <script>
+        // Simple credentials (username: Efx, password: root)
+        const ADMIN_USERNAME = "Efx";
+        const ADMIN_PASSWORD = "root";
+        
+        // Disable right click
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        
+        // Disable keyboard shortcuts
+        document.onkeydown = function(e) {
+            // Disable F12 key
+            if(e.keyCode == 123) {
+                return false;
+            }
+            // Disable Ctrl+Shift+I
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) {
+                return false;
+            }
+            // Disable Ctrl+Shift+J
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) {
+                return false;
+            }
+            // Disable Ctrl+Shift+C
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) {
+                return false;
+            }
+            // Disable Ctrl+U
+            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) {
+                return false;
+            }
+            // Disable Print Screen
+            if(e.keyCode == 44) {
+                showScreenshotAlert();
+                return false;
+            }
+        }
+        
+        // Show screenshot alert
+        function showScreenshotAlert() {
+            const alert = document.getElementById('screenshot-alert');
+            alert.style.display = 'block';
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 3000);
+        }
+        
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('error-message');
+            
+            // Check credentials
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                // Store login state in localStorage
+                localStorage.setItem('adminLoggedIn', 'true');
+                
+                // Redirect to admin panel
+                window.location.href = 'admin-panel.html';
+            } else {
+                // Show error message
+                errorMessage.style.display = 'block';
+                
+                // Clear password field
+                document.getElementById('password').value = '';
+            }
+        });
+    </script>
+</body>
+</html> 
